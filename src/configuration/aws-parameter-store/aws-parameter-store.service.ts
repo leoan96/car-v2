@@ -16,7 +16,7 @@ export class AwsParameterStoreService implements ConfigurationInterface {
     this.prefix_path = `/socar-v2/${process.env.NODE_ENV}`;
   }
 
-  private async getParameterByName(name: string): Promise<number> {
+  private async getParameterByName(name: string): Promise<string> {
     const command = new GetParameterCommand({
       Name: name,
     });
@@ -34,6 +34,10 @@ export class AwsParameterStoreService implements ConfigurationInterface {
   }
 
   public async getServerPort(): Promise<number> {
-    return this.getParameterByName(`${this.prefix_path}/SERVER_PORT`);
+    return +(await this.getParameterByName(`${this.prefix_path}/SERVER_PORT`));
+  }
+
+  public async getFrontendUrl(): Promise<string> {
+    return await this.getParameterByName(`${this.prefix_path}/FRONTEND_URL`);
   }
 }

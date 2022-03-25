@@ -10,8 +10,13 @@ async function bootstrap() {
   const config = app.get(CONFIGURATION_SERVICE);
 
   const port = await config.getServerPort();
+  const frontendUrl = await config.getFrontendUrl();
 
   app.use(helmet());
+  app.enableCors({
+    origin: frontendUrl,
+    credentials: true,
+  });
 
   await app.listen(port);
   console.log(`Server listening on port ${port}...`);
