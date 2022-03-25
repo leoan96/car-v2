@@ -1,16 +1,15 @@
 import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
 
-import { ServerConfig } from './configuration/config/server';
+import { CONFIGURATION_SERVICE } from './configuration/configuration.constants';
 import { AppModule } from './app.module';
 
 import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const config = app.get(ConfigService);
-  const serverConfig = config.get<ServerConfig>('server');
-  const port = serverConfig.port;
+  const config = app.get(CONFIGURATION_SERVICE);
+
+  const port = await config.getServerPort();
 
   app.use(helmet());
 
