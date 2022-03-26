@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 
 import { CONFIGURATION_SERVICE } from './configuration/configuration.constants';
 import { AppModule } from './app.module';
@@ -14,6 +15,7 @@ async function bootstrap() {
   const frontendUrl = await config.getFrontendUrl();
 
   app.useLogger(app.get(CustomLoggerService));
+  app.useGlobalPipes(new ValidationPipe());
   app.use(helmet());
   app.enableCors({
     origin: frontendUrl,
