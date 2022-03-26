@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 import { CONFIGURATION_SERVICE } from './configuration/configuration.constants';
+import { AllExceptionsFilter } from './exception-filter/all-exception.filter';
 import { AppModule } from './app.module';
 import { CustomLoggerService } from './custom-logger/custom-logger.service';
 
@@ -14,15 +15,16 @@ async function bootstrap() {
   const port = await config.getServerPort();
   const frontendUrl = await config.getFrontendUrl();
 
-  app.useLogger(app.get(CustomLoggerService));
+  const logger = app.get(CustomLoggerService);
+
+  app.useLogger(logger);
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new AllExceptionsFilter(logger));
   app.use(helmet());
   app.enableCors({
     origin: frontendUrl,
     credentials: true,
   });
-
-  const logger = app.get(CustomLoggerService);
 
   await app.listen(port);
   logger.log(`Server listening on port ${port}...`, { context: 'main' });
