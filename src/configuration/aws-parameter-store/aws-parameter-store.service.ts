@@ -21,6 +21,7 @@ export class AwsParameterStoreService implements ConfigurationInterface {
   private async getParameterByName(name: string): Promise<string> {
     const command = new GetParameterCommand({
       Name: name,
+      WithDecryption: true,
     });
 
     let response;
@@ -43,5 +44,33 @@ export class AwsParameterStoreService implements ConfigurationInterface {
 
   public async getFrontendUrl(): Promise<string> {
     return await this.getParameterByName(`${this.prefix_path}/FRONTEND_URL`);
+  }
+
+  public async getTypeOrmHost(): Promise<string> {
+    return await this.getParameterByName(`${this.prefix_path}/TYPE_ORM_HOST`);
+  }
+
+  public async getTypeOrmPort(): Promise<number> {
+    return +(await this.getParameterByName(
+      `${this.prefix_path}/TYPE_ORM_PORT`,
+    ));
+  }
+
+  public async getTypeOrmUsername(): Promise<string> {
+    return await this.getParameterByName(
+      `${this.prefix_path}/TYPE_ORM_USERNAME`,
+    );
+  }
+
+  public async getTypeOrmPassword(): Promise<string> {
+    return await this.getParameterByName(
+      `${this.prefix_path}/TYPE_ORM_PASSWORD`,
+    );
+  }
+
+  public async getTypeOrmDatabase(): Promise<string> {
+    return await this.getParameterByName(
+      `${this.prefix_path}/TYPE_ORM_DATABASE`,
+    );
   }
 }
