@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { AWS_PARAMETER_STORE_CLIENT } from './aws-parameter-store.constants';
 import { ConfigurationInterface } from '../configuration.interface';
+import { CustomLoggerService } from '../../custom-logger/custom-logger.service';
 
 import { SSMClient, GetParameterCommand } from '@aws-sdk/client-ssm';
 
@@ -12,6 +13,7 @@ export class AwsParameterStoreService implements ConfigurationInterface {
   constructor(
     @Inject(AWS_PARAMETER_STORE_CLIENT)
     private readonly awsParameterStoreClient: SSMClient,
+    private readonly logger: CustomLoggerService,
   ) {
     this.prefix_path = `/socar-v2/${process.env.NODE_ENV}`;
   }
@@ -27,8 +29,10 @@ export class AwsParameterStoreService implements ConfigurationInterface {
         await this.awsParameterStoreClient.send(command)
       ).Parameter.Value;
     } catch (err) {
-      // #TODO: replace console.log with logger when logger is set up
-      console.log(err);
+      this.logger.error('Error while calling awsParameterStoreClient.send', {
+        context: 'aws-parameter-store.service',
+        stack: err,
+      });
     }
     return response;
   }

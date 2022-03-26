@@ -1,23 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AWS_PARAMETER_STORE_CLIENT } from './aws-parameter-store.constants';
-import { CustomLoggerService } from '../../custom-logger/custom-logger.service';
-import { AwsParameterStoreService } from './aws-parameter-store.service';
+import { WINSTON_LOGGER } from './winston/winston.constants';
+import { CustomLoggerService } from './custom-logger.service';
 
-describe('AwsParameterStoreService', () => {
-  let service: AwsParameterStoreService;
+describe('CustomLoggerService', () => {
+  let service: CustomLoggerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
-          provide: AWS_PARAMETER_STORE_CLIENT,
-          useValue: {
-            send: jest.fn(() => 'value'),
-          },
-        },
-        {
-          provide: CustomLoggerService,
+          provide: WINSTON_LOGGER,
           useValue: {
             log: jest.fn((message, ...metadata) =>
               console.log(message, metadata),
@@ -36,11 +29,11 @@ describe('AwsParameterStoreService', () => {
             ),
           },
         },
-        AwsParameterStoreService,
+        CustomLoggerService,
       ],
     }).compile();
 
-    service = module.get<AwsParameterStoreService>(AwsParameterStoreService);
+    service = module.get<CustomLoggerService>(CustomLoggerService);
   });
 
   it('should be defined', () => {

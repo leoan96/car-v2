@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { CONFIGURATION_SERVICE } from './configuration/configuration.constants';
 import { AppModule } from './app.module';
+import { CustomLoggerService } from './custom-logger/custom-logger.service';
 
 import helmet from 'helmet';
 
@@ -12,13 +13,16 @@ async function bootstrap() {
   const port = await config.getServerPort();
   const frontendUrl = await config.getFrontendUrl();
 
+  app.useLogger(app.get(CustomLoggerService));
   app.use(helmet());
   app.enableCors({
     origin: frontendUrl,
     credentials: true,
   });
 
+  const logger = app.get(CustomLoggerService);
+
   await app.listen(port);
-  console.log(`Server listening on port ${port}...`);
+  logger.log(`Server listening on port ${port}...`, { context: 'main' });
 }
 bootstrap();
