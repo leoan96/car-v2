@@ -6,8 +6,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
-import { Request, Response } from 'express';
 import { CustomLoggerService } from '../custom-logger/custom-logger.service';
+
+import { Request, Response } from 'express';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -26,10 +27,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
+    const message =
+      exception instanceof HttpException
+        ? exception.message
+        : 'Oops! Something went wrong! Please try again later';
+
     response.status(httpStatus).json({
       timestamp: new Date().toISOString(),
       statusCode: httpStatus,
-      message: 'Oops! Something went wrong! Please try again later',
+      message,
       path: request.url,
     });
   }
