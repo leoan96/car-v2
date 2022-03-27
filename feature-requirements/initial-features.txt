@@ -26,14 +26,19 @@ Entity
 3. car-listing
     - 1. car 
     - pickup location
-    - price per hour in RM (ringgit malaysia)
-    - average rating
+    - lat
+    - lng
+    - price per hour in RM (ringgit malaysia): storing in cents denomination
+    - cummulative ratings
+    - total no of ratings
+    - average rating (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
     - total request bookings
     - acceptance (frontend can calculate acceptance rate manually)
-    - response rate (can create background job using SNS queue & lambda functions to calculate, not a priority)
-    - response time (can create background job using SNS queue & lambda functions to calculate, not a priority)
+    - response rate (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
+    - response time (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
     - isBooked (boolean)
     - isLocked (boolean)
+    - isAvailableForViewInCarListing (boolean)
     - 4. car-availability
 
 4. car-availability
@@ -42,7 +47,7 @@ Entity
     - end date
 
 5. car-time-slot
-    - 4. car-listing
+    - 4. car-availability
     - date (one car-time-slot entry per car-availability start to end day range)
     - array with 144 elements (24hrs a day * 60 mins / 10mins per time slot block): boolean (representing whether it is booked)
 

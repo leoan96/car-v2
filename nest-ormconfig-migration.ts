@@ -31,9 +31,10 @@ const ssmConfigurationValues = async () => ({
   database: await getParameterByName(`${prefix_path}/TYPE_ORM_DATABASE`),
 });
 
+// NOTE: if there are typeorm config in local environment variables,
+// local environment variables would be used instead of values from aws ssm
 const configValues = async () => {
   const values = await ssmConfigurationValues();
-  console.log(process.env.TYPE_ORM_HOST || values.host);
   return {
     type: 'postgres',
     host: process.env.TYPE_ORM_HOST || values.host,

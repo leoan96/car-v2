@@ -5,6 +5,6 @@ export class CarFeatures {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 30 })
   feature: string;
 }

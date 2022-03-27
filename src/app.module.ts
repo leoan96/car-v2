@@ -5,6 +5,7 @@ import { ConfigurationModule } from './configuration/configuration.module';
 import { CustomLoggerModule } from './custom-logger/custom-logger.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CarListingModule } from './car-listing/car-listing.module';
 import ormconfig from '../ormconfig';
 
 @Module({
@@ -12,6 +13,7 @@ import ormconfig from '../ormconfig';
     TypeOrmModule.forRootAsync(ormconfig()),
     ConfigurationModule,
     CustomLoggerModule,
+    CarListingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
