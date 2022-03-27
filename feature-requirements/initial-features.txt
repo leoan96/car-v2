@@ -81,6 +81,15 @@ API endpoints
 
 ------------------------------------------------------------------------------------------------
 
+NOTE: TypeORM migration limitations on NestJS
+1. nest-ormconfig-migration.ts was created and used to generate migration files in package.json script
+   as ormconfig.ts cannot be executed by typeorm cli.
+2. this is due to the fact that ormconfig.ts retrieves its config from an external module: ConfigurationModule,
+   running the migration generation script with ormconfig.ts file would cause an error as the module: ConfigurationModule
+   is not injected by NestJS.
+
+------------------------------------------------------------------------------------------------
+
 QUESTIONS
 1. is compensating transaction being implemented for inter microservice transactions?
 2. is any api manager being used to manage all the microservices?
