@@ -5,3 +5,13 @@ export class CreateCarFeaturesDto {
   @IsString()
   feature: string;
 }
+
+export class UpdateCarFeaturesDto {
+  @IsNotEmpty()
+  @IsString()
+  oldFeature: string;
+
+  @IsNotEmpty()
+  @IsString()
+  newFeature: string;
+}

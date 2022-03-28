@@ -5,7 +5,6 @@ import { CarFeatures } from '../car-entity/car-features.entity';
 import { createCarFeaturesStub } from './car-features.stub';
 import { CreateCarFeaturesDto } from './car-features.dto';
 import { CarFeaturesService } from './car-features.service';
-import { CustomLoggerService } from '../custom-logger/custom-logger.service';
 
 describe('CarFeaturesService', () => {
   let service: CarFeaturesService;
@@ -14,12 +13,6 @@ describe('CarFeaturesService', () => {
     const stub = createCarFeaturesStub();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        {
-          provide: CustomLoggerService,
-          useValue: {
-            error: jest.fn(),
-          },
-        },
         {
           provide: getRepositoryToken(CarFeatures),
           useValue: {

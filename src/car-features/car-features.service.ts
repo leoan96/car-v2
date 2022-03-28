@@ -1,19 +1,12 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CarFeatures } from '../car-entity/car-features.entity';
 import { CarFeaturesInterface } from './car-features.interface';
 import {
   handleAsyncError,
-  INTERNAL_SERVER_ERROR_MESSAGE,
   isPostgresTypeOrmDuplicateKeyError,
-  isPostgresTypeOrmEntityNotFoundError,
 } from '../../utilities/error-handler';
-import { CustomLoggerService } from '../custom-logger/custom-logger.service';
 
 import { Repository } from 'typeorm';
 
@@ -22,7 +15,6 @@ export class CarFeaturesService implements CarFeaturesInterface {
   constructor(
     @InjectRepository(CarFeatures)
     private readonly carFeaturesRepository: Repository<CarFeatures>,
-    private readonly logger: CustomLoggerService,
   ) {}
 
   public async addNewFeature(featureName: string): Promise<CarFeatures> {
@@ -33,21 +25,17 @@ export class CarFeaturesService implements CarFeaturesInterface {
     const [newFeature, newFeatureError]: [CarFeatures, unknown] =
       await handleAsyncError(this.carFeaturesRepository.save(feature));
     if (newFeatureError) {
-      this.logger.error(newFeatureError);
       if (isPostgresTypeOrmDuplicateKeyError(newFeatureError)) {
         throw new BadRequestException('duplicate key error');
       }
-      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE);
     }
     return newFeature;
   }
 
   public async getAllFeatures(): Promise<CarFeatures[]> {
-    const [features, featuresError]: [CarFeatures[], unknown] =
-      await handleAsyncError(this.carFeaturesRepository.find());
-    if (featuresError) {
-      this.logger.error(featuresError);
-    }
+    const [features]: [CarFeatures[], unknown] = await handleAsyncError(
+      this.carFeaturesRepository.find(),
+    );
     return features;
   }
 
@@ -59,8 +47,7 @@ export class CarFeaturesService implements CarFeaturesInterface {
         }),
       );
     if (featureError) {
-      this.logger.error(featureError);
-      throw new BadRequestException(featureError);
+      throw new BadRequestException('Invalid feature name given');
     }
     return feature;
   }
@@ -72,11 +59,7 @@ export class CarFeaturesService implements CarFeaturesInterface {
     const [oldFeature, oldFeatureError]: [CarFeatures, unknown] =
       await handleAsyncError(this.getFeatureByName(oldFeatureName));
     if (oldFeatureError) {
-      this.logger.error(oldFeatureError);
-      if (isPostgresTypeOrmEntityNotFoundError(oldFeatureError)) {
-        throw new BadRequestException('Invalid feature name given');
-      }
-      throw new InternalServerErrorException(INTERNAL_SERVER_ERROR_MESSAGE);
+      throw new BadRequestException('Invalid feature name given');
     }
 
     oldFeature.feature = newFeatureName;
@@ -85,11 +68,10 @@ export class CarFeaturesService implements CarFeaturesInterface {
 
   public async deleteFeature(featureName: string): Promise<void> {
     const [feature, featureError] = await handleAsyncError(
-      this.carFeaturesRepository.find({ feature: featureName }),
+      this.carFeaturesRepository.findOneOrFail({ feature: featureName }),
     );
     if (featureError) {
-      this.logger.error(featureError);
-      throw new BadRequestException('Invalid feature name given');
+      throw new BadRequestException('Feature does not exist');
     }
     await handleAsyncError(this.carFeaturesRepository.remove(feature));
   }

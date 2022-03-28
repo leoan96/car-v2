@@ -4,6 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { CustomLoggerService } from '../custom-logger/custom-logger.service';
@@ -32,11 +33,20 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.message
         : 'Oops! Something went wrong! Please try again later';
 
-    response.status(httpStatus).json({
-      timestamp: new Date().toISOString(),
-      statusCode: httpStatus,
-      message,
-      path: request.url,
-    });
+    if (exception instanceof BadRequestException) {
+      response.status(httpStatus).json({
+        timestamp: new Date().toISOString(),
+        statusCode: httpStatus,
+        message: exception['response']['message'],
+        path: request.url,
+      });
+    } else {
+      response.status(httpStatus).json({
+        timestamp: new Date().toISOString(),
+        statusCode: httpStatus,
+        message,
+        path: request.url,
+      });
+    }
   }
 }

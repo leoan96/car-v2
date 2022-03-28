@@ -13,7 +13,3 @@ export const handleAsyncError = (promise) => {
 export const isPostgresTypeOrmDuplicateKeyError = (error) => {
   return error?.code === '23505' ? true : false;
 };
-
-export const isPostgresTypeOrmEntityNotFoundError = (error) => {
-  return error instanceof EntityNotFoundError ? true : false;
-};
