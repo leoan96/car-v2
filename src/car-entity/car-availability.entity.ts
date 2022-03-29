@@ -15,7 +15,7 @@ export class CarAvailability {
   id: number;
 
   @ManyToOne(() => CarListing, (listing) => listing.car_availability)
-  car_listing: CarListing[];
+  car_listing: CarListing;
 
   @Column({ type: 'timestamptz' })
   start_date: Date;

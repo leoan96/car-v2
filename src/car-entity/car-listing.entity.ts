@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -15,6 +16,7 @@ export class CarListing {
   id: number;
 
   @OneToOne(() => Car, { cascade: true, onDelete: 'CASCADE', nullable: false })
+  @JoinColumn()
   car: Car;
 
   @Column({ type: 'varchar', length: 150, nullable: false })
@@ -71,5 +73,6 @@ export class CarListing {
       onDelete: 'CASCADE',
     },
   )
-  car_availability: CarAvailability;
+  @JoinColumn()
+  car_availability: CarAvailability[];
 }

@@ -12,7 +12,13 @@ describe('CarListingController', () => {
       providers: [
         {
           provide: CarListingService,
-          useValue: { addCarListing: jest.fn() },
+          useValue: {
+            addCarListing: jest.fn(),
+            getAllCarListings: jest.fn(),
+            getCarListingsById: jest.fn(),
+            updateCarListingById: jest.fn(),
+            deleteCarListing: jest.fn(),
+          },
         },
       ],
     }).compile();
