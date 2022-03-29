@@ -12,9 +12,15 @@ export interface GoogleOauthConfigurationInterface {
   getGoogleClientCallbackUrl(): Promise<string> | string;
 }
 
+export interface JwtConfigurationInterface {
+  getJwtSecret(): Promise<string> | string;
+  getJwtExpiresIn(): Promise<string> | string;
+}
+
 export interface ConfigurationInterface
   extends TypeOrmConfigurationInterface,
-    GoogleOauthConfigurationInterface {
+    GoogleOauthConfigurationInterface,
+    JwtConfigurationInterface {
   getServerPort(): Promise<number> | number;
   getFrontendUrl(): Promise<string> | string;
 }

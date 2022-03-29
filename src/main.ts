@@ -7,10 +7,11 @@ import { AppModule } from './app.module';
 import { CustomLoggerService } from './custom-logger/custom-logger.service';
 
 import helmet from 'helmet';
+import { ConfigurationInterface } from './configuration/configuration.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const config = app.get(CONFIGURATION_SERVICE);
+  const config: ConfigurationInterface = app.get(CONFIGURATION_SERVICE);
 
   const port = await config.getServerPort();
   const frontendUrl = await config.getFrontendUrl();

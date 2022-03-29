@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { FrontendConfig } from '../config/frontend';
 import { GoogleOauthConfig } from '../config/google_oauth';
+import { JwtConfig } from '../config/jwt';
 import { ServerConfig } from '../config/server';
 import { TypeOrmConfig } from '../config/type_orm';
 import { ConfigurationInterface } from '../configuration.interface';
@@ -51,5 +52,13 @@ export class LocalDevelopmentEnvironmentConfigurationService
   public getGoogleClientCallbackUrl(): string {
     return this.configService.get<GoogleOauthConfig>('googleOauth')
       .client_callback_url;
+  }
+
+  public getJwtSecret(): string {
+    return this.configService.get<JwtConfig>('jwt').jwt_secret;
+  }
+
+  public getJwtExpiresIn(): string {
+    return this.configService.get<JwtConfig>('jwt').jwt_expires_in;
   }
 }
