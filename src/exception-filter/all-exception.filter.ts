@@ -10,6 +10,7 @@ import {
 import { CustomLoggerService } from '../custom-logger/custom-logger.service';
 
 import { Request, Response } from 'express';
+import { nanoid } from 'nanoid';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -33,8 +34,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.message
         : 'Oops! Something went wrong! Please try again later';
 
+    const id = nanoid();
+
     if (exception instanceof BadRequestException) {
       response.status(httpStatus).json({
+        id,
         timestamp: new Date().toISOString(),
         statusCode: httpStatus,
         message: exception['response']['message'],
@@ -42,6 +46,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       });
     } else {
       response.status(httpStatus).json({
+        id,
         timestamp: new Date().toISOString(),
         statusCode: httpStatus,
         message,

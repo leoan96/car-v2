@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CarAvailability } from '../car-entity/car-availability.entity';
 import { CarFeatures } from '../car-entity/car-features.entity';
 import { CarListing } from '../car-entity/car-listing.entity';
-import { CarTimeSlot } from '../car-entity/car-time-slot.entity';
+// import { CarTimeSlot } from '../car-entity/car-time-slot.entity';
 import { Car } from '../car-entity/car.entity';
 import { CarListingController } from './car-listing.controller';
 import { CarListingService } from './car-listing.service';
@@ -16,7 +16,7 @@ import { CarListingService } from './car-listing.service';
       CarAvailability,
       CarFeatures,
       CarListing,
-      CarTimeSlot,
+      // CarTimeSlot,
     ]),
   ],
   providers: [CarListingService],
