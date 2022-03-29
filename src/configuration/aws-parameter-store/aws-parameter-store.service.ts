@@ -73,4 +73,28 @@ export class AwsParameterStoreService implements ConfigurationInterface {
       `${this.prefix_path}/TYPE_ORM_DATABASE`,
     );
   }
+
+  public async getGoogleClientId(): Promise<string> {
+    return await this.getParameterByName(
+      `${this.prefix_path}/GOOGLE_CLIENT_ID`,
+    );
+  }
+  public async getGoogleClientSecret(): Promise<string> {
+    return await this.getParameterByName(
+      `${this.prefix_path}/GOOGLE_CLIENT_SECRET`,
+    );
+  }
+  public async getGoogleClientCallbackUrl(): Promise<string> {
+    return await this.getParameterByName(
+      `${this.prefix_path}/GOOGLE_CLIENT_CALLBACK_URL`,
+    );
+  }
+
+  public async getJwtSecret(): Promise<string> {
+    return await this.getParameterByName(`${this.prefix_path}/JWT_SECRET`);
+  }
+
+  public async getJwtExpiresIn(): Promise<string> {
+    return await this.getParameterByName(`${this.prefix_path}/JWT_EXPIRES_IN`);
+  }
 }
