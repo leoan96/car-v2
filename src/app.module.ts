@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { CarListingModule } from './car-listing/car-listing.module';
 import { CarFeaturesModule } from './car-features/car-features.module';
 import { CarAvailabilityModule } from './car-availability/car-availability.module';
+import { AuthModule } from './auth/auth.module';
 import ormconfig from '../ormconfig';
 
 @Module({
@@ -18,6 +19,7 @@ import ormconfig from '../ormconfig';
     CarListingModule,
     CarFeaturesModule,
     CarAvailabilityModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
