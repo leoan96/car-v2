@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtAuthService } from './jwt-auth.service';
 
@@ -6,7 +7,13 @@ describe('JwtAuthService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [JwtAuthService],
+      providers: [
+        {
+          provide: JwtService,
+          useValue: {},
+        },
+        JwtAuthService,
+      ],
     }).compile();
 
     service = module.get<JwtAuthService>(JwtAuthService);

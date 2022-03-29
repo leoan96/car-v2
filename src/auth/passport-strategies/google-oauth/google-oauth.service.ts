@@ -2,14 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { ConfigurationInterface } from '../../../configuration/configuration.interface';
-import { CONFIGURATION_SERVICE } from '../../../configuration/configuration.constants';
+import { GOOGLE_OAUTH_CONFIGURATION_SERVICE } from './google-oauth.constants';
 
-import { Strategy, VerifyCallback } from 'passport-google-oauth2';
+import { Strategy } from 'passport-google-oauth2';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @Inject(CONFIGURATION_SERVICE)
+    @Inject(GOOGLE_OAUTH_CONFIGURATION_SERVICE)
     protected readonly configurationService: ConfigurationInterface,
   ) {
     super({
@@ -21,20 +21,19 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy) {
   }
 
   // https://dev.to/imichaelowolabi/how-to-implement-login-with-google-in-nest-js-2aoa
-  async validate(
-    accessToken: string,
-    refreshToken: string,
-    profile: any,
-    done: VerifyCallback,
+  public async validate(
+    _accessToken: string,
+    _refreshToken: string,
+    profile,
   ): Promise<any> {
-    const { name, emails, photos } = profile;
-    const user = {
-      email: emails[0].value,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      picture: photos[0].value,
-      accessToken,
+    const { id, name, emails } = profile;
+
+    // Here a custom User object is returned. In the the repo I'm using a UsersService with repository pattern, learn more here: https://docs.nestjs.com/techniques/database
+    return {
+      provider: 'google',
+      providerId: id,
+      name: name.givenName,
+      username: emails[0].value,
     };
-    done(null, user);
   }
 }

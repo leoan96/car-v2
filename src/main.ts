@@ -3,11 +3,12 @@ import { ValidationPipe } from '@nestjs/common';
 
 import { CONFIGURATION_SERVICE } from './configuration/configuration.constants';
 import { AllExceptionsFilter } from './exception-filter/all-exception.filter';
+import { ConfigurationInterface } from './configuration/configuration.interface';
 import { AppModule } from './app.module';
 import { CustomLoggerService } from './custom-logger/custom-logger.service';
 
 import helmet from 'helmet';
-import { ConfigurationInterface } from './configuration/configuration.interface';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +27,7 @@ async function bootstrap() {
     origin: frontendUrl,
     credentials: true,
   });
+  app.use(cookieParser());
 
   await app.listen(port);
   logger.log(`Server listening on port ${port}...`, { context: 'main' });

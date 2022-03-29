@@ -8,8 +8,10 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CarAvailability } from '../car-entity/car-availability.entity';
 import {
   CreateCarAvailabilityDto,
@@ -24,6 +26,7 @@ export class CarAvailabilityController {
   ) {}
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public getCurrentTimings(
     @Param('id', ParseIntPipe) id: number,
@@ -32,6 +35,7 @@ export class CarAvailabilityController {
   }
 
   @Post(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   public addAvailabilityTime(
     @Param('id', ParseIntPipe) id: number,
@@ -44,6 +48,7 @@ export class CarAvailabilityController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   public updateAvailabilityTime(
     @Param('id', ParseIntPipe) id: number,
