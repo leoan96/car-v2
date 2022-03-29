@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, In, Repository } from 'typeorm';
+import { Connection, EntityNotFoundError, In, Repository } from 'typeorm';
 
 import { CarAvailability } from '../car-entity/car-availability.entity';
 import { CarFeatures } from '../car-entity/car-features.entity';
@@ -10,6 +10,7 @@ import { Car } from '../car-entity/car.entity';
 import { CreateCarListingDto, UpdateCarListingDto } from './car-listing.dto';
 import { CarListingInterface } from './car-listing.interface';
 
+import { handleAsyncError } from '../../utilities/error-handler';
 // import * as dayjs from 'dayjs';
 // import { calculateDaysBetweenTwoDates } from '../../utilities/date-manipulation';
 
@@ -87,9 +88,25 @@ export class CarListingService implements CarListingInterface {
   }
 
   public async getCarListingsById(id: number): Promise<CarListing> {
-    throw new Error('Method not implemented.');
+    const [carListing, carListingError] = await handleAsyncError(
+      this.carListingRepository
+        .createQueryBuilder('listing')
+        .leftJoinAndSelect('listing.car', 'car')
+        .leftJoinAndSelect('listing.car_availability', 'car_availability')
+        .where('listing.id = :id', { id })
+        .getOneOrFail(),
+    );
+    if (carListingError) {
+      if (carListingError instanceof EntityNotFoundError) {
+        throw new BadRequestException(
+          `Could not find any entity with id=${id}`,
+        );
+      }
+    }
+    return carListing;
   }
 
+  // #TODO: not priority, not in requirements
   public async updateCarListingById(
     id: number,
     updateCarListingDto: UpdateCarListingDto,
@@ -97,7 +114,27 @@ export class CarListingService implements CarListingInterface {
     throw new Error('Method not implemented.');
   }
 
-  public async deleteCarListing(id: number) {
-    throw new Error('Method not implemented.');
+  public async deleteCarListing(id: number): Promise<void> {
+    await this.connection.manager.transaction(async (manager) => {
+      const [carListing, carListingError] = await handleAsyncError(
+        manager
+          .getRepository(CarListing)
+          .createQueryBuilder('listing')
+          .leftJoinAndSelect('listing.car', 'car')
+          .leftJoinAndSelect('listing.car_availability', 'car_availability')
+          .where('listing.id = :id', { id })
+          .getOneOrFail(),
+      );
+      if (carListingError) {
+        if (carListingError instanceof EntityNotFoundError) {
+          throw new BadRequestException(
+            `Could not find any entity with id=${id}`,
+          );
+        }
+      }
+
+      await manager.getRepository(Car).remove(carListing.car);
+      await manager.getRepository(CarListing).remove(carListing);
+    });
   }
 }

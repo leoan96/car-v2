@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -17,6 +19,7 @@ export class CarFeaturesController {
   constructor(private readonly carFeaturesService: CarFeaturesService) {}
 
   @Post('')
+  @HttpCode(HttpStatus.CREATED)
   public addNewFeature(
     @Body() createCarFeaturesDto: CreateCarFeaturesDto,
   ): Promise<CarFeatures> {
@@ -24,11 +27,13 @@ export class CarFeaturesController {
   }
 
   @Get('')
+  @HttpCode(HttpStatus.OK)
   public getAllFeatures(): Promise<CarFeatures[]> {
     return this.carFeaturesService.getAllFeatures();
   }
 
   @Get(':featureName')
+  @HttpCode(HttpStatus.OK)
   public getFeatureByName(
     @Param('featureName') featureName: string,
   ): Promise<CarFeatures> {
@@ -36,6 +41,7 @@ export class CarFeaturesController {
   }
 
   @Patch(':featureName')
+  @HttpCode(HttpStatus.OK)
   public updateFeatureByName(
     @Body() updateCarFeaturesDto: UpdateCarFeaturesDto,
   ): Promise<CarFeatures> {
@@ -46,6 +52,7 @@ export class CarFeaturesController {
   }
 
   @Delete(':featureName')
+  @HttpCode(HttpStatus.NO_CONTENT)
   public deleteFeature(
     @Param('featureName') featureName: string,
   ): Promise<void> {

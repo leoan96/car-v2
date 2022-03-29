@@ -15,6 +15,7 @@ export class CarListing {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // https://github.com/typeorm/typeorm/issues/3218 (onDelete: "CASCADE does not work for OneToOne relation?")
   @OneToOne(() => Car, { cascade: true, onDelete: 'CASCADE', nullable: false })
   @JoinColumn()
   car: Car;
@@ -64,7 +65,8 @@ export class CarListing {
   @Column({ default: true })
   is_available_for_view_in_car_listing: boolean;
 
-  // https://stackoverflow.com/questions/55098023/typeorm-cascade-option-cascade-ondelete-onupdate
+  // https://stackoverflow.com/questions/55098023/typeorm-cascade-option-cascade-ondelete-onupdate (difference between cascade & onDelete: "CASCADE")
+  // https://github.com/typeorm/typeorm/issues/1782 (required to set onDelete: "CASCADE" on both OneToMany & ManyToMany for cascade delete to work...)
   @OneToMany(
     () => CarAvailability,
     (availability) => availability.car_listing,
