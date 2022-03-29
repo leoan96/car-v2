@@ -4,10 +4,13 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 
-import { Request, Response } from 'express';
 import { CustomLoggerService } from '../custom-logger/custom-logger.service';
+
+import { Request, Response } from 'express';
+import { nanoid } from 'nanoid';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -26,11 +29,29 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    response.status(httpStatus).json({
-      timestamp: new Date().toISOString(),
-      statusCode: httpStatus,
-      message: 'Oops! Something went wrong! Please try again later',
-      path: request.url,
-    });
+    const message =
+      exception instanceof HttpException
+        ? exception.message
+        : 'Oops! Something went wrong! Please try again later';
+
+    const id = nanoid();
+
+    if (exception instanceof BadRequestException) {
+      response.status(httpStatus).json({
+        id,
+        timestamp: new Date().toISOString(),
+        statusCode: httpStatus,
+        message: exception['response']['message'],
+        path: request.url,
+      });
+    } else {
+      response.status(httpStatus).json({
+        id,
+        timestamp: new Date().toISOString(),
+        statusCode: httpStatus,
+        message,
+        path: request.url,
+      });
+    }
   }
 }

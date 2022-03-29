@@ -1,11 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { ConfigurationModule } from './configuration/configuration.module';
 import { CustomLoggerModule } from './custom-logger/custom-logger.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { CarListingModule } from './car-listing/car-listing.module';
+import { CarFeaturesModule } from './car-features/car-features.module';
+import ormconfig from '../ormconfig';
 
 @Module({
-  imports: [ConfigurationModule, CustomLoggerModule],
+  imports: [
+    TypeOrmModule.forRootAsync(ormconfig()),
+    ConfigurationModule,
+    CustomLoggerModule,
+    CarListingModule,
+    CarFeaturesModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

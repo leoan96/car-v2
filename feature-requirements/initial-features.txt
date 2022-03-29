@@ -1,0 +1,105 @@
+------------------------------------------------------------------------------------------------
+
+Entity
+1. car
+    - brand
+    - model
+    - 2. car-features
+    - what you get (description: stored as an array of string)
+    - images
+
+2. car-features
+    - auto
+    - manual
+    - 2wd
+    - 4wd
+    - RON95
+    - RON97
+    - hybrid
+    - electric
+    - 4 seater
+    - 2 seater
+    - bluetooth
+    - apple carplay
+    - android auto
+
+3. car-listing
+    - 1. car 
+    - pickup location
+    - lat
+    - lng
+    - price per hour in RM (ringgit malaysia): storing in cents denomination
+    - isAvailableForViewInCarListing (boolean)
+    - 4. car-availability
+
+    - cummulative ratings
+    - total no of ratings
+    - average rating (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
+    - total request bookings
+    - acceptance (frontend can calculate acceptance rate manually)
+    - response rate (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
+    - response time (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
+    - isBooked (boolean)
+    - isLocked (boolean)
+
+4. car-availability
+    - 3. car-listing
+    - start date
+    - end date
+
+5. car-time-slot
+    - 4. car-availability
+    - date (one car-time-slot entry per car-availability start to end day range)
+    - array with 144 elements (24hrs a day * 60 mins / 10mins per time slot block): boolean (representing whether it is booked)
+
+6. user
+    - email
+    - password
+    - first name
+    - last name
+    - identification card
+    - isVerified
+    - photo
+    - thumbnail
+    - phone
+    - walletExists
+    
+------------------------------------------------------------------------------------------------
+
+API endpoints
+1. car-listing api (filterable by date, availability)
+    - index (list all cars: showing model name, price, location)
+    - show car details
+    - add a car
+
+2. car-availability api (per car)
+    - list all availability days of that particular car
+    - list all available time slot for that particular date
+    - add availability of time slot
+    - update availability of time slot
+
+3. car-booking api
+    - 
+
+
+4. car-payment api
+    -
+
+------------------------------------------------------------------------------------------------
+
+NOTE: TypeORM migration limitations on NestJS
+1. nest-ormconfig-migration.ts was created and used to generate migration files in package.json script
+   as ormconfig.ts cannot be executed by typeorm cli.
+2. this is due to the fact that ormconfig.ts retrieves its config from an external module: ConfigurationModule,
+   running the migration generation script with ormconfig.ts file would cause an error as the module: ConfigurationModule
+   is not injected by NestJS.
+
+------------------------------------------------------------------------------------------------
+
+QUESTIONS
+1. is compensating transaction being implemented for inter microservice transactions?
+2. is any api manager being used to manage all the microservices?
+3. what happens when 2 users are looking at the same car but one user pays first? do we lock the 
+   listing for a set time like 10mins for the user to pay? proper way to handle?
+4. how is timeslot availability being implemented and stored in the db?
+5. for booking cars, what is the proper way to process them in an asynchronous way given that the order of booking matters
