@@ -6,7 +6,15 @@ export interface TypeOrmConfigurationInterface {
   getTypeOrmDatabase(): Promise<string> | string;
 }
 
-export interface ConfigurationInterface extends TypeOrmConfigurationInterface {
+export interface GoogleOauthConfigurationInterface {
+  getGoogleClientId(): Promise<string> | string;
+  getGoogleClientSecret(): Promise<string> | string;
+  getGoogleClientCallbackUrl(): Promise<string> | string;
+}
+
+export interface ConfigurationInterface
+  extends TypeOrmConfigurationInterface,
+    GoogleOauthConfigurationInterface {
   getServerPort(): Promise<number> | number;
   getFrontendUrl(): Promise<string> | string;
 }
