@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
 } from '@nestjs/common';
 
@@ -33,13 +34,17 @@ export class CarListingController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  public getCarListingsById(@Param('id') id: number): Promise<CarListing> {
+  public getCarListingsById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<CarListing> {
     return this.carListingService.getCarListingsById(id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  public deleteCarListing(@Param('id') id: number): Promise<void> {
+  public deleteCarListing(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
     return this.carListingService.deleteCarListing(id);
   }
 }

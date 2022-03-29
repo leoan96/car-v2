@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CarListingModule } from './car-listing/car-listing.module';
 import { CarFeaturesModule } from './car-features/car-features.module';
+import { CarAvailabilityModule } from './car-availability/car-availability.module';
 import ormconfig from '../ormconfig';
 
 @Module({
@@ -16,6 +17,7 @@ import ormconfig from '../ormconfig';
     CustomLoggerModule,
     CarListingModule,
     CarFeaturesModule,
+    CarAvailabilityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

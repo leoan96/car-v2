@@ -81,10 +81,7 @@ export class CarListingService implements CarListingInterface {
   }
 
   public async getAllCarListings(): Promise<CarListing[]> {
-    const carListings = await this.carListingRepository.find();
-    console.log(carListings);
-
-    return carListings;
+    return await this.carListingRepository.find();
   }
 
   public async getCarListingsById(id: number): Promise<CarListing> {
