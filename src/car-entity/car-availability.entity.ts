@@ -14,8 +14,10 @@ export class CarAvailability {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => CarListing, (listing) => listing.car_availability)
-  car_listing: CarListing[];
+  @ManyToOne(() => CarListing, (listing) => listing.car_availability, {
+    onDelete: 'CASCADE',
+  })
+  car_listing: CarListing;
 
   @Column({ type: 'timestamptz' })
   start_date: Date;
