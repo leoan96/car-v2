@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { CarFeatures } from './car-features.entity';
 
@@ -13,12 +19,13 @@ export class Car {
   @Column({ type: 'varchar', length: 30 })
   model: string;
 
-  @Column({ array: true })
-  description: string;
+  @Column({ type: 'varchar', array: true })
+  description: string[];
 
-  @Column({ array: true })
-  images: string;
+  @Column({ type: 'varchar', array: true })
+  images: string[];
 
-  @OneToMany(() => CarFeatures, (feature) => feature.feature)
+  @ManyToMany(() => CarFeatures, (feature) => feature.car, { cascade: true })
+  @JoinTable()
   features: CarFeatures[];
 }

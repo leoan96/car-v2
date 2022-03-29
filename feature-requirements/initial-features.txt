@@ -29,6 +29,9 @@ Entity
     - lat
     - lng
     - price per hour in RM (ringgit malaysia): storing in cents denomination
+    - isAvailableForViewInCarListing (boolean)
+    - 4. car-availability
+
     - cummulative ratings
     - total no of ratings
     - average rating (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
@@ -38,8 +41,6 @@ Entity
     - response time (can create background job with aws eventbridge, using SNS queue & lambda functions to calculate, not a priority)
     - isBooked (boolean)
     - isLocked (boolean)
-    - isAvailableForViewInCarListing (boolean)
-    - 4. car-availability
 
 4. car-availability
     - 3. car-listing
