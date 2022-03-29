@@ -1,9 +1,11 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { CarFeatures, CAR_FEATURES } from './car-features.types';
 
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 export class CreateCarFeaturesDto {
   @IsNotEmpty()
+  @IsEnum(CAR_FEATURES)
   @IsString()
-  feature: string;
+  feature: CarFeatures;
 }
 
 export class UpdateCarFeaturesDto {

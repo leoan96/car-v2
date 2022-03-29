@@ -1,5 +1,16 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
+
 import { CreateCarListingDto } from './car-listing.dto';
+import { CarListing } from '../car-entity/car-listing.entity';
 import { CarListingService } from './car-listing.service';
 
 @Controller('car-listing')
@@ -7,7 +18,28 @@ export class CarListingController {
   constructor(private readonly carListingService: CarListingService) {}
 
   @Post()
-  public async addCarListing(@Body() createCarListingDto: CreateCarListingDto) {
-    await this.carListingService.addCarListing(createCarListingDto);
+  @HttpCode(HttpStatus.CREATED)
+  public addCarListing(
+    @Body() createCarListingDto: CreateCarListingDto,
+  ): Promise<CarListing> {
+    return this.carListingService.addCarListing(createCarListingDto);
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  public getAllCarListings(): Promise<CarListing[]> {
+    return this.carListingService.getAllCarListings();
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  public getCarListingsById(@Param('id') id: number): Promise<CarListing> {
+    return this.carListingService.getCarListingsById(id);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public deleteCarListing(@Param('id') id: number): Promise<void> {
+    return this.carListingService.deleteCarListing(id);
   }
 }

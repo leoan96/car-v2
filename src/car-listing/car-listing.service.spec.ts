@@ -1,8 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Connection } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { createCarListingStub } from './car-listing.stub';
+import { CarListing } from '../car-entity/car-listing.entity';
 import { CreateCarListingDto } from './car-listing.dto';
 import { CarListingService } from './car-listing.service';
-import { createCarListingStub } from './car-listing.stub';
+
+import { Connection } from 'typeorm';
 
 describe('CarListingService', () => {
   let service: CarListingService;
@@ -13,6 +17,12 @@ describe('CarListingService', () => {
         {
           provide: Connection,
           useValue: {},
+        },
+        {
+          provide: getRepositoryToken(CarListing),
+          useValue: {
+            find: jest.fn(),
+          },
         },
         CarListingService,
       ],

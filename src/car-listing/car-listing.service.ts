@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { Connection, In } from 'typeorm';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, EntityNotFoundError, In, Repository } from 'typeorm';
 
 import { CarAvailability } from '../car-entity/car-availability.entity';
 import { CarFeatures } from '../car-entity/car-features.entity';
@@ -9,16 +10,23 @@ import { Car } from '../car-entity/car.entity';
 import { CreateCarListingDto, UpdateCarListingDto } from './car-listing.dto';
 import { CarListingInterface } from './car-listing.interface';
 
+import { handleAsyncError } from '../../utilities/error-handler';
 // import * as dayjs from 'dayjs';
 // import { calculateDaysBetweenTwoDates } from '../../utilities/date-manipulation';
 
 @Injectable()
 export class CarListingService implements CarListingInterface {
-  constructor(private readonly connection: Connection) {}
+  constructor(
+    private readonly connection: Connection,
+    @InjectRepository(CarListing)
+    private readonly carListingRepository: Repository<CarListing>,
+  ) {}
 
   public async addCarListing(
     createCarListingDto: CreateCarListingDto,
   ): Promise<CarListing> {
+    let result;
+
     await this.connection.manager.transaction(async (manager) => {
       // step 1. create car object
       const car_feature = await manager.find(CarFeatures, {
@@ -57,7 +65,6 @@ export class CarListingService implements CarListingInterface {
       const car_availability_created = await manager
         .getRepository(CarAvailability)
         .save(car_availability);
-      console.log(car_availability_created);
 
       // step 5: create car listing object
       const car_listing = await manager.create(CarListing, {
@@ -66,23 +73,40 @@ export class CarListingService implements CarListingInterface {
         lat: createCarListingDto.lat,
         lng: createCarListingDto.lng,
         price: createCarListingDto.pricePerHour,
-        car_availability: car_availability_created,
+        car_availability: [car_availability_created],
       });
-      console.log(car_listing);
-      await manager.getRepository(CarListing).save(car_listing);
+      result = await manager.getRepository(CarListing).save(car_listing);
     });
-
-    return {} as CarListing;
+    return result;
   }
 
   public async getAllCarListings(): Promise<CarListing[]> {
-    throw new Error('Method not implemented.');
+    const carListings = await this.carListingRepository.find();
+    console.log(carListings);
+
+    return carListings;
   }
 
   public async getCarListingsById(id: number): Promise<CarListing> {
-    throw new Error('Method not implemented.');
+    const [carListing, carListingError] = await handleAsyncError(
+      this.carListingRepository
+        .createQueryBuilder('listing')
+        .leftJoinAndSelect('listing.car', 'car')
+        .leftJoinAndSelect('listing.car_availability', 'car_availability')
+        .where('listing.id = :id', { id })
+        .getOneOrFail(),
+    );
+    if (carListingError) {
+      if (carListingError instanceof EntityNotFoundError) {
+        throw new BadRequestException(
+          `Could not find any entity with id=${id}`,
+        );
+      }
+    }
+    return carListing;
   }
 
+  // #TODO: not priority, not in requirements
   public async updateCarListingById(
     id: number,
     updateCarListingDto: UpdateCarListingDto,
@@ -90,7 +114,27 @@ export class CarListingService implements CarListingInterface {
     throw new Error('Method not implemented.');
   }
 
-  public async deleteCarListing(id: number) {
-    throw new Error('Method not implemented.');
+  public async deleteCarListing(id: number): Promise<void> {
+    await this.connection.manager.transaction(async (manager) => {
+      const [carListing, carListingError] = await handleAsyncError(
+        manager
+          .getRepository(CarListing)
+          .createQueryBuilder('listing')
+          .leftJoinAndSelect('listing.car', 'car')
+          .leftJoinAndSelect('listing.car_availability', 'car_availability')
+          .where('listing.id = :id', { id })
+          .getOneOrFail(),
+      );
+      if (carListingError) {
+        if (carListingError instanceof EntityNotFoundError) {
+          throw new BadRequestException(
+            `Could not find any entity with id=${id}`,
+          );
+        }
+      }
+
+      await manager.getRepository(Car).remove(carListing.car);
+      await manager.getRepository(CarListing).remove(carListing);
+    });
   }
 }
