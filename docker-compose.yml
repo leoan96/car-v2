@@ -4,19 +4,19 @@ services:
     image: leoan96/nestjs-socar-v2-docker:latest
     ports:
       - 80:9000
-  db:
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - '5432:5432'
-    volumes:
-      - db:/var/lib/postgresql/data
-volumes:
-  db:
-    driver: local
+#   db:
+#     image: postgres:14.1-alpine
+#     restart: always
+#     environment:
+#       - POSTGRES_USER=postgres
+#       - POSTGRES_PASSWORD=postgres
+#     ports:
+#       - '5432:5432'
+#     volumes:
+#       - db:/var/lib/postgresql/data
+# volumes:
+#   db:
+#     driver: local
 # version: '3.9' # optional since v1.27.0
 # services:
 #   web:
