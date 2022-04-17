@@ -1,0 +1,52 @@
+version: 2.1
+orbs:
+  eb: circleci/aws-elastic-beanstalk@2.0.1
+  aws-cli: circleci/aws-cli@3.0.0
+jobs:
+  test-build-deploy:
+    docker:
+      - image: 'cimg/node:16.14.2'
+        auth:
+          username: $DOCKER_LOGIN
+          password: $DOCKER_PWD
+    resource_class: large
+    steps:
+      # https://circleci.com/blog/build-cicd-piplines-using-docker/
+      - checkout
+      - eb/setup
+      - aws-cli/setup
+      - run:
+          name: attach policy to ec2 service role to allow access to parameter store
+          command: |
+            aws iam attach-role-policy --policy-arn arn:aws:iam::410326991932:policy/ec2SSMParameterStoreRole --role-name aws-elasticbeanstalk-ec2-role
+      - run:
+          name: Store variables tag, image_name as environment variables in $BASH_ENV
+          command: |
+            echo 'export TAG=0.1.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+            echo 'export IMAGE_NAME=nestjs-socar-v2-docker' >> $BASH_ENV
+      - run:
+          name: Install node_modules
+          command: |
+            npm ci
+      - run:
+          name: Run tests
+          command: |
+            npm run test
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker build -t leoan96/$IMAGE_NAME:latest -t leoan96/$IMAGE_NAME:$TAG .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push leoan96/$IMAGE_NAME --all-tags
+      - run:
+          name: Deploy new code
+          command: |
+            eb deploy
+            eb status
+
+workflows:
+  test_my_app:
+    jobs:
+      - test-build-deploy
