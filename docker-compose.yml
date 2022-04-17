@@ -1,5 +1,9 @@
 version: '2.4'
 services:
+  web:
+    image: leoan96/nestjs-socar-v2-docker:latest
+    ports:
+      - 80:9000
   db:
     image: postgres:14.1-alpine
     restart: always
@@ -13,3 +17,9 @@ services:
 volumes:
   db:
     driver: local
+# version: '3.9' # optional since v1.27.0
+# services:
+#   web:
+#     image: leoan966/nestjs-circleci-docker:latest
+#     ports:
+#       - 80:3000
