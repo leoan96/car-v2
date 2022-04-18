@@ -1,4 +1,6 @@
 branch-defaults:
+  develop:
+    environment: deploy-docker-dev
   main:
     environment: deploy-docker-dev
     group_suffix: null
